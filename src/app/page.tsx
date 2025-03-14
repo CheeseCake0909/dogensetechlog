@@ -71,6 +71,21 @@ export default function Home() {
             </div>
           </section>
         </main>
+          {/* Sidebar */}
+          <aside className="w-full md:w-1/4 p-6 border-t md:border-t-0 md:border-l border-gray-300"> 
+          <h3 className="text-2xl font-semibold mb-4">カテゴリ</h3>
+          <ul className="space-y-2">
+            <li className="p-2 bg-white shadow rounded-lg text-center">プログラミング</li>
+            <li className="p-2 bg-white shadow rounded-lg text-center">CG / UE5</li>
+            <li className="p-2 bg-white shadow rounded-lg text-center">開発メモ</li>
+          </ul>
+          <h3 className="text-2xl font-semibold mt-6 mb-4">月別アーカイブ</h3>
+          <ul className="space-y-2">
+            <li className="p-2 bg-white shadow rounded-lg text-center">2025年3月</li>
+            <li className="p-2 bg-white shadow rounded-lg text-center">2025年2月</li>
+            <li className="p-2 bg-white shadow rounded-lg text-center">2025年1月</li>
+          </ul>
+        </aside>
       </div>
       <footer className="text-center py-6 border-t border-gray-300">
         <div className="mt-4">
