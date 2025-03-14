@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "microcms-js-sdk";
 
-const MICROCMS_SERVICE_DOMAIN = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || "";
-const MICROCMS_API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "";
-const MICROCMS_API_URL = `https://${MICROCMS_SERVICE_DOMAIN}.microcms.io/api/v1/article`;
+const client = createClient({
+  serviceDomain: process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || "", 
+  apiKey: process.env.NEXT_PUBLIC_MICROCMS_API_KEY || ""
+});
 
 export default function Home() {
   const [articles, setArticles] = useState<{ id: string; title: string; content: string; thumbnail?: { url: string }; category: { name: string }; publishedAt: string }[]>([]);
@@ -14,10 +16,7 @@ export default function Home() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const res = await fetch(MICROCMS_API_URL, {
-          headers: { "X-MICROCMS-API-KEY": MICROCMS_API_KEY },
-        });
-        const data = await res.json();
+        const data = await client.get({ endpoint: "article" });
         setArticles(data.contents.map((article: { id: string; title: string; content: string; thumbnail?: { url: string }; category: { name: string }; publishedAt: string }) => ({
           id: article.id,
           title: article.title,
