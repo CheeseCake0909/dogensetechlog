@@ -5,9 +5,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "microcms-js-sdk";
 
+const MICROCMS_SERVICE_DOMAIN = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN;
+const MICROCMS_API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
+
+if (!MICROCMS_SERVICE_DOMAIN || !MICROCMS_API_KEY) {
+  throw new Error("MicroCMS の環境変数が設定されていません");
+}
+
 const client = createClient({
-  serviceDomain: process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || "", 
-  apiKey: process.env.NEXT_PUBLIC_MICROCMS_API_KEY || ""
+  serviceDomain: MICROCMS_SERVICE_DOMAIN, 
+  apiKey: MICROCMS_API_KEY,
 });
 
 export default function Home() {
@@ -16,8 +23,16 @@ export default function Home() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
+        console.log("Fetching from:", MICROCMS_SERVICE_DOMAIN);
+        console.log("Using API Key:", MICROCMS_API_KEY ? "✔ 設定済み" : "❌ 未設定");
+
         const data = await client.get({ endpoint: "article" });
-        setArticles(data.contents.map((article: { id: string; title: string; content: string; thumbnail?: { url: string }; category: { name: string }; publishedAt: string }) => ({
+        console.log("Fetched Data:", data);
+
+        setArticles(data.contents.map((article: { 
+          id: string; title: string; content: string; 
+          thumbnail?: { url: string }; category: { name: string }; publishedAt: string 
+        }) => ({
           id: article.id,
           title: article.title,
           content: article.content.replace(/<[^>]*>?/gm, ''),
@@ -26,7 +41,7 @@ export default function Home() {
           publishedAt: article.publishedAt || "",
         })));
       } catch (error) {
-        console.error("記事の取得に失敗しました.", error);
+        console.error("記事の取得に失敗しました", error);
       }
     };
     fetchArticles();
@@ -70,8 +85,7 @@ export default function Home() {
             </div>
           </section>
         </main>
-          {/* Sidebar */}
-          <aside className="w-full md:w-1/4 p-6 border-t md:border-t-0 md:border-l border-gray-300"> 
+        <aside className="w-full md:w-1/4 p-6 border-t md:border-t-0 md:border-l border-gray-300"> 
           <h3 className="text-2xl font-semibold mb-4">カテゴリ</h3>
           <ul className="space-y-2">
             <li className="p-2 bg-white shadow rounded-lg text-center">プログラミング</li>
