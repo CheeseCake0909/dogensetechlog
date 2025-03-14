@@ -26,7 +26,7 @@ export default function Home() {
           publishedAt: article.publishedAt || "",
         })));
       } catch (error) {
-        console.error("記事の取得に失敗しました", error);
+        console.error("記事の取得に失敗しました.", error);
       }
     };
     fetchArticles();
