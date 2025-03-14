@@ -1,100 +1,84 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+const MICROCMS_SERVICE_DOMAIN = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || "";
+const MICROCMS_API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "";
+const MICROCMS_API_URL = `https://${MICROCMS_SERVICE_DOMAIN}.microcms.io/api/v1/article`;
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function Home() {
+  const [articles, setArticles] = useState<{ id: string; title: string; content: string; thumbnail?: { url: string }; category: { name: string }; publishedAt: string }[]>([]);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const res = await fetch(MICROCMS_API_URL, {
+          headers: { "X-MICROCMS-API-KEY": MICROCMS_API_KEY },
+        });
+        const data = await res.json();
+        setArticles(data.contents.map((article: { id: string; title: string; content: string; thumbnail?: { url: string }; category: { name: string }; publishedAt: string }) => ({
+          id: article.id,
+          title: article.title,
+          content: article.content.replace(/<[^>]*>?/gm, ''),
+          thumbnail: article.thumbnail ? { url: article.thumbnail.url } : undefined,
+          category: article.category || { name: "未分類" },
+          publishedAt: article.publishedAt || "",
+        })));
+      } catch (error) {
+        console.error("記事の取得に失敗しました", error);
+      }
+    };
+    fetchArticles();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
+      <header className="flex justify-between items-center p-6 border-b border-gray-300">
+        <h1 className="text-2xl font-bold">どげんせTechログ</h1>
+      </header>
+      <div className="container mx-auto px-6 flex flex-col md:flex-row flex-1">
+        <main className="flex-1 p-6">
+          <section className="text-center py-20 px-6">
+            <h2 className="text-3xl font-extrabold mb-4">どげんせやんやったっけ？という時に見るブログ</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">福岡弁でよかかもしれん情報ばまとめとーよ。</p>
+          </section>
+          <section className="px-6 py-12 bg-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-3xl font-semibold">記事一覧</h3>
+              <input 
+                type="text" 
+                placeholder="🔍 検索..." 
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {articles.map((article) => (
+                <div key={article.id} className="p-6 bg-white shadow rounded-lg">
+                  {article.thumbnail && (
+                    <Image src={article.thumbnail.url} alt={article.title} width={600} height={300} className="w-full h-48 object-cover rounded-md mb-4" />
+                  )}
+                  <h4 className="text-lg font-bold mb-1">{article.title}</h4>
+                  <p className="text-gray-700 text-base mb-2">公開日: {new Date(article.publishedAt).toLocaleDateString()}</p>
+                  <p className="text-gray-500 text-xs mb-2">{article.content.slice(0, 100)}...</p>
+                  <p className="text-base mb-1">{article.category.name}</p>
+                  <Link href={`/blog/${article.id}`} className="text-blue-400 hover:underline">
+                    続きを読む →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        </main>
+      </div>
+      <footer className="text-center py-6 border-t border-gray-300">
+        <div className="mt-4">
+          <Link href="/contact" className="text-blue-400 hover:underline mr-4">お問い合わせ</Link>
+          <Link href="/privacy-policy" className="text-blue-400 hover:underline mr-4">プライバシーポリシー</Link>
+          <Link href="/disclaimer" className="text-blue-400 hover:underline">免責事項</Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <div className="mt-4 text-gray-500">© 2025 どげんせTechログ</div>
       </footer>
     </div>
   );
