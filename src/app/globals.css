@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-ElenaShine: "ElenaShine", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
