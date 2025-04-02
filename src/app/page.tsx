@@ -48,6 +48,14 @@ export default function Home() {
   }, [darkMode]);
 
   useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         // カテゴリデータ取得
@@ -91,11 +99,13 @@ setArchives(sortedArchives);
     }
   };
 
+  const cyberColor = darkMode ? "#97E3FE" : "#F88D01";
+
   return (
     <div className="min-h-screen relative">
       {/* ヘッダー */}
-      <header className="flex justify-between items-center px-12 py-6 bg-white border-b border-gray-600 dark:border-gray-700 z-10 relative">
-        <Link href="/"><h1 className="~text-xl/4xl font-ElenaShine font-medium">Dogense Tech Log</h1></Link>
+      <header className="flex justify-between items-center px-12 py-6 bg-white border-b border-gray-600 dark:border-gray-700 dark:bg-black z-10 relative">
+        <Link href="/"><h1 className="~text-xl/4xl font-ElenaShine font-medium text-[#171717] dark:text-white">Dogense Tech Log</h1></Link>
         <div className="flex items-center">
           <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden mr-4">
             <input
@@ -103,7 +113,7 @@ setArchives(sortedArchives);
               placeholder="記事を検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 w-52 dark:bg-gray-700 dark:text-white focus:outline-none"
+              className="px-4 py-2 w-52 text-black dark:bg-gray-700 dark:text-white focus:outline-none"
             />
             <button
               onClick={handleSearch}
@@ -128,7 +138,7 @@ setArchives(sortedArchives);
           setDarkMode(false);
           setIsAccordionOpen(false);
         }}
-        className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
+        className="block w-full text-center py-2 text-black hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
       >
         ライトモード
       </button>
@@ -137,7 +147,7 @@ setArchives(sortedArchives);
           setDarkMode(true);
           setIsAccordionOpen(false);
         }}
-        className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
+        className="block w-full text-center py-2 text-black hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
       >
         ダークモード
       </button>
@@ -146,7 +156,7 @@ setArchives(sortedArchives);
           setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
           setIsAccordionOpen(false);
         }}
-        className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
+        className="block w-full text-center py-2 text-black hover:bg-gray-300 dark:hover:bg-gray-700 transition-color duration-300"
       >
         デバイス設定
       </button>
@@ -156,11 +166,11 @@ setArchives(sortedArchives);
         </div>
       </header>
       {/* サイバーグリッド背景（四隅+と中央に6x6の点） */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-gradient-to-b from-white to-stone-300 dark:from-black dark:via-gray-900 dark:to-gray-800">
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-neutral-100 dark:bg-slate-900 transition duration-500">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="cyber-grid" width="160" height="160" patternUnits="userSpaceOnUse">
-              <g stroke="#ff6600" strokeWidth="1">
+              <g style={{ stroke: cyberColor, transition: "stroke 0.5s ease" }} strokeWidth="1">
                 {/* 四隅の + 記号 */}
                 <g>
                   <line x1="10" y1="5" x2="10" y2="15" />
@@ -170,57 +180,59 @@ setArchives(sortedArchives);
               {/* 中央の6x6ドット */}
               {
                 [...Array(6)].map((_, i) => [...Array(6)].map((_, j) => (
-                  <circle key={`dot-${i}-${j}`} cx={27 + i * 25} cy={27 + j * 25} r="1.0" fill="#ff6600" />
+                  <circle key={`dot-${i}-${j}`} cx={27 + i * 25} cy={27 + j * 25} r="1.0" 
+                    style={{
+                    fill: cyberColor,
+                    transition: "fill 0.5s ease",
+                  }}/>
                 )))
               }
             </pattern>
           </defs>
-          <rect width="160%" height="160%" fill="url(#cyber-grid)" opacity="0.7" className="dark:opacity-20" />
+          <rect width="160%" height="160%" fill="url(#cyber-grid)" opacity="1.0"/>
         </svg>
       </div>
       <div className="container mx-auto px-6 flex flex-col md:flex-row flex-1 relative z-10">
         {/* 記事一覧 */}
-      
         <main className="flex-1 p-6">
-          <h2 className="~text-lg/3xl font-medium mx-auto w-2/3 text-center py-4 my-6 bg-opacity-60 bg-white shadow rounded-lg backdrop-blur-[2px]">どげんせやんやったっけ？という時に見るブログ</h2>
+          <h2 className="~text-lg/3xl font-medium mx-auto w-2/3 text-center py-4 my-6 bg-opacity-60 bg-white shadow rounded-lg backdrop-blur-[2px] text-[#171717]">どげんせやんやったっけ？という時に見るブログ</h2>
           <div className="bg-opacity-60 bg-white px-8 pt-4 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px]">
-          <h3 className="text-2xl font-medium py-5 ">
+          <h3 className="text-2xl font-medium py-5 text-[#171717]">
               記事一覧
             </h3>
           <section className="grid md:grid-cols-2 gap-6">
             {articles.map((article) => (
               <Link key={article.id} href={`/article/${article.id}`}>
-                <div className="p-6 bg-white shadow-xl dark:bg-gray-700 border-[1px] rounded-md hover:bg-gray-300 transition-color duration-300">
+                <div className="p-6 bg-white shadow-xl dark:bg-gray-700 border-[1px] rounded-md hover:bg-neutral-300 transition-color duration-300">
                   {article.thumbnail && (
                     <Image src={article.thumbnail.url} alt={article.title} width={600} height={300} className="w-full h-48 object-cover mb-4 rounded-md" />
                   )}
-                  <h4 className="text-lg font-bold mb-1">{article.title}</h4>
+                  <h4 className="text-lg font-bold mb-1 text-[#171717]">{article.title}</h4>
                   <p className="text-gray-700 text-sm mb-2 dark:text-gray-300">公開日: {new Date(article.publishedAt).toLocaleDateString("ja-JP")}</p>
                   <p className="text-gray-500 text-xs mb-2 dark:text-gray-400" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content.slice(0, 100)) }}></p>
-                  <p className="text-base">{article.category.name}</p>
+                  <p className="text-base text-[#171717]">{article.category.name}</p>
                 </div>
               </Link>
             ))}
           </section>
           </div>
         </main>
-
         {/* サイドバー */}
         <aside className="w-full md:w-1/4 px-6 mt-10 bg-opacity-60 bg-white shadow rounded-lg backdrop-blur-[2px] h-full py-6">
           {/* カテゴリ */}
-          <h3 className="text-3xl font-normal mb-4 font-ElenaShine">Category</h3>
+          <h3 className="text-3xl font-normal mb-4 font-ElenaShine text-[#171717]">Category</h3>
           <ul className="space-y-2">
             {categories.map(({ id, name }) => (
-              <li key={id} className="p-2 bg-white shadow text-sm rounded-lg text-center dark:bg-gray-700 cursor-pointer hover:bg-gray-300 transition-color duration-300">
+              <li key={id} className="p-2 bg-white text-[#171717] shadow text-sm rounded-lg text-center dark:bg-gray-700 dark:text-white cursor-pointer hover:bg-neutral-200 transition-color duration-300">
                 <Link href={`/category/${id}`}>{name}</Link>
               </li>
             ))}
           </ul>
           {/* 月別アーカイブ */}
-          <h3 className="text-3xl font-medium mb-4 mt-10 font-ElenaShine">Monthly Archive</h3>
+          <h3 className="text-3xl font-medium mb-4 mt-10 font-ElenaShine text-[#171717]">Monthly Archive</h3>
           <ul className="space-y-2">
             {archives.map(({ month, count }) => (
-              <li key={month} className="p-2 bg-white shadow text-sm rounded-lg text-center dark:bg-gray-700 cursor-pointer hover:bg-gray-300 transition-color duration-300">
+              <li key={month} className="p-2 text-[#171717] bg-white shadow text-sm rounded-lg text-center dark:bg-gray-700 dark:text-white cursor-pointer hover:bg-neutral-300 transition-color duration-300">
                 <Link href={`/archive/${month}`}>{month}（{count}）</Link>
               </li>
             ))}
@@ -229,7 +241,7 @@ setArchives(sortedArchives);
       </div>
 
       {/* フッター */}
-      <footer className="text-center py-6 border-t border-gray-600 dark:border-gray-700 bg-white relative z-10">
+      <footer className="text-center py-6 border-t border-gray-600 dark:border-gray-700 dark:bg-black bg-white relative z-10">
         <div className="text-gray-500 dark:text-gray-400">© 2025 Dogense Tech Log</div>
       </footer>
     </div>

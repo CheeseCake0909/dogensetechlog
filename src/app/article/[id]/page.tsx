@@ -123,7 +123,6 @@ export default function ArticlePage() {
               {parse(article.content)}
             </div>
           </article>
-
           <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg">
             <div className="flex justify-between">
               {prevArticle ? (
@@ -143,7 +142,6 @@ export default function ArticlePage() {
             </div>
           </div>
         </main>
-
         <aside className="w-full md:w-1/4 p-6 border-gray-300 dark:border-gray-700">
           <h3 className="text-2xl font-medium mb-4 mt-10">カテゴリ</h3>
           <ul className="space-y-2">
