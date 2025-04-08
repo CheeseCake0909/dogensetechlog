@@ -5,7 +5,10 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "microcms-js-sdk";
-import { useRouter } from "next/navigation";
+import Header from "@/components/header";
+import BackGround from "@/components/background";
+import Footer from "@/components/footer";
+import Side from "@/components/side";
 
 const MICROCMS_SERVICE_DOMAIN = "dogensetech";
 const MICROCMS_API_KEY = "IEuon3gxGGPrMo96Ymmzx3sus1XlJoD5H7tC";
@@ -29,21 +32,6 @@ export default function CategoryPage() {
   const categoryId = Array.isArray(id) ? id[0] : id;
   const [categoryName, setCategoryName] = useState("");
   const [articles, setArticles] = useState<Article[]>([]);
-  const [darkMode, setDarkMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme) {
-      setDarkMode(storedTheme === "dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -64,39 +52,13 @@ export default function CategoryPage() {
     fetchArticles();
   }, [categoryId]);
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
-      <header className="flex justify-between items-center px-12 py-6 border-b border-gray-300 dark:border-gray-700">
-        <Link href="/"><h1 className="text-4xl font-ElenaShine font-medium">Dogense Tech Log</h1></Link>
-        <div>
-          <input
-            type="text"
-            placeholder="記事を検索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white"
-          />
-          <button onClick={handleSearch} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">検索</button>
-          <button onClick={() => setIsAccordionOpen(!isAccordionOpen)} className="w-36 px-4 py-2 bg-gray-500 text-white rounded dark:bg-gray-300 dark:text-black">
-            {isAccordionOpen ? "▼ テーマ選択" : "▶ テーマ選択"}
-          </button>
-          {isAccordionOpen && (
-            <div className="absolute right-10 w-36 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg z-10">
-              <button onClick={() => { setDarkMode(false); setIsAccordionOpen(false); }} className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700">ライトモード</button>
-              <button onClick={() => { setDarkMode(true); setIsAccordionOpen(false); }} className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700">ダークモード</button>
-              <button onClick={() => { setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches); setIsAccordionOpen(false); }} className="block w-full text-center py-2 hover:bg-gray-300 dark:hover:bg-gray-700">デバイス設定</button>
-            </div>
-          )}
-        </div>
-      </header>
-
-      <div className="container mx-auto px-6 flex flex-col">
+    <div className="min-h-screen relative">
+      <Header/>
+      <BackGround/>
+      <div className="container mx-auto px-6 flex flex-col lg:flex-row flex-1 relative z-10">
+      <main className="flex-1 p-6">
+      <div className="bg-opacity-60 bg-white px-8 pt-4 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px]">
         <h2 className="text-3xl font-bold mt-6">{categoryName} の記事一覧</h2>
         <section className="grid md:grid-cols-2 gap-6 mt-6">
           {articles.map((article) => (
@@ -114,7 +76,12 @@ export default function CategoryPage() {
           ))}
           {articles.length === 0 && <p className="text-center text-gray-500 dark:text-gray-400">このカテゴリには記事がありません。</p>}
         </section>
+        </div>
+        
+      </main>
+      <Side/>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,19 +1,25 @@
+"use client"
+
 import React, { Suspense } from "react";
-import Link from "next/link";
 import SearchContent from "./SearchContent";
+import Header from "@/components/header";
+import BackGround from "@/components/background";
+import Footer from "@/components/footer";
+import Side from "@/components/side";
 
 export default function SearchPage() {
+
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
-      <header className="flex justify-between items-center px-10 py-6 border-b border-gray-300 dark:border-gray-700">
-        <Link href="/">
-          <h1 className="text-2xl font-bold">どげんせTechログ</h1>
-        </Link>
-      </header>
-
+      <Header/>
+      <BackGround/>
+      <div className="container mx-auto px-6 flex flex-col lg:flex-row flex-1 relative z-10">
       <Suspense fallback={<div className="text-center py-10">読み込み中...</div>}>
         <SearchContent />
       </Suspense>
+      <Side/>
+      </div>
+      <Footer/>
     </div>
   );
 }

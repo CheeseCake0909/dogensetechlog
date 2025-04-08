@@ -47,7 +47,7 @@ export default function SearchContent() {
 
   return (
     <div className="container mx-auto px-6 flex flex-col ">
-      <h2 className="text-3xl font-bold mt-6">検索結果: 「{query}」</h2>
+      <h2 className="text-3xl font-bold mt-6">「{query}」の検索結果 </h2>
       <section className="grid md:grid-cols-2 gap-6 mt-6">
         {articles.map((article) => (
           <Link href={`/article/${article.id}`} key={article.id}>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Zen_Kaku_Gothic_Antique } from "next/font/google";
 import "./globals.css"; // Tailwind CSS の適用
 import localFont from "next/font/local";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 
 const zenKakuGothicAntique = Zen_Kaku_Gothic_Antique({
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body
         className={`${zenKakuGothicAntique.className} antialiased ${ElenaShine.variable}`}
       >
+        <ThemeProvider>
         {children}
+        </ThemeProvider>
       </body>
     </html>
   );

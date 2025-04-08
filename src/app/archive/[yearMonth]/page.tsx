@@ -4,15 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "microcms-js-sdk";
-
-const MICROCMS_SERVICE_DOMAIN = "dogensetech";
-const MICROCMS_API_KEY = "IEuon3gxGGPrMo96Ymmzx3sus1XlJoD5H7tC";
-
-const client = createClient({
-  serviceDomain: MICROCMS_SERVICE_DOMAIN,
-  apiKey: MICROCMS_API_KEY,
-});
+import Header from "@/components/header";
+import BackGround from "@/components/background";
+import Footer from "@/components/footer";
+import Side from "@/components/side";
+import { client } from "@/libs/client";
 
 /* const MICROCMS_SERVICE_DOMAIN = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY; */
@@ -46,14 +42,11 @@ export default function ArchivePage() {
   }, [yearMonth]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
-      <header className="flex justify-between items-center px-10 py-6 border-b border-gray-300 dark:border-gray-700">
-        <Link href="/">
-          <h1 className="text-2xl font-bold">どげんせTechログ</h1>
-        </Link>
-      </header>
-
-      <div className="container mx-auto px-6 flex flex-col">
+    <div className="min-h-screen relative">
+      <Header/>
+      <BackGround/>
+      <div className="container mx-auto px-6 flex flex-col lg:flex-row flex-1 relative z-10">
+      <main className="flex-1 p-6">
         <h2 className="text-3xl font-bold mt-6">{yearMonth} の記事一覧</h2>
         <section className="grid md:grid-cols-2 gap-6 mt-6">
           {articles.map((article) => (
@@ -71,7 +64,10 @@ export default function ArchivePage() {
           ))}
           {articles.length === 0 && <p className="text-center text-gray-500 dark:text-gray-400">この月には記事がありません。</p>}
         </section>
+      </main>
+      <Side/>
       </div>
+      <Footer />
     </div>
   );
 }
