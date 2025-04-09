@@ -4,21 +4,15 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "microcms-js-sdk";
-
-const MICROCMS_SERVICE_DOMAIN = "dogensetech";
-const MICROCMS_API_KEY = "IEuon3gxGGPrMo96Ymmzx3sus1XlJoD5H7tC";
-
-const client = createClient({
-  serviceDomain: MICROCMS_SERVICE_DOMAIN,
-  apiKey: MICROCMS_API_KEY,
-});
+import DOMPurify from "dompurify";
+import { client } from "@/libs/client";
 
 interface Article {
   id: string;
   title: string;
   content: string;
   thumbnail?: { url: string };
+  category: { name: string };
   publishedAt: string;
 }
 
@@ -26,6 +20,7 @@ export default function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // 👈 ローディング状態追加
 
   useEffect(() => {
     if (!query) return;
@@ -36,9 +31,17 @@ export default function SearchContent() {
           endpoint: "article",
           queries: { filters: `title[contains]${query}` },
         });
-        setArticles(data.contents);
+
+        const sorted = data.contents.sort(
+          (a: { publishedAt: string }, b: { publishedAt: string }) =>
+            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        );
+
+        setArticles(sorted);
       } catch (error) {
         console.error("検索結果の取得に失敗しました", error);
+      } finally {
+        setIsLoading(false); // ✅ 読み込み完了
       }
     };
 
@@ -46,34 +49,48 @@ export default function SearchContent() {
   }, [query]);
 
   return (
-    <div className="container mx-auto px-6 flex flex-col ">
-      <h2 className="text-3xl font-bold mt-6">「{query}」の検索結果 </h2>
-      <section className="grid md:grid-cols-2 gap-6 mt-6">
-        {articles.map((article) => (
-          <Link href={`/article/${article.id}`} key={article.id}>
-            <div className="p-6 bg-white shadow rounded-lg dark:bg-gray-700">
+    <main className="flex-1 dark:bg-opacity-60 border dark:border-neutral-600 px-8 py-2 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px]">
+      <h3 className="~text-xl/2xl font-normal ~py-4/7 text-[#171717] dark:text-white">「{query}」の検索結果</h3>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-32">
+          <div className="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin" />
+        </div>
+      ) : (
+        <section className="grid lg:grid-cols-2 gap-8">
+          {articles.map((article) => (
+            <Link
+              key={article.id}
+              href={`/article/${article.id}`}
+              className="p-6 bg-white shadow-lg dark:bg-neutral-700 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-400 transition-color duration-500"
+            >
               {article.thumbnail && (
                 <Image
                   src={article.thumbnail.url}
                   alt={article.title}
                   width={600}
                   height={300}
-                  className="w-full h-48 object-cover rounded-md mb-4"
+                  className="w-full ~h-48/52 sm:~h-52/60 lg:~h-32/48  object-cover mb-4 rounded-md"
                 />
               )}
-              <h4 className="text-lg font-bold mb-1">{article.title}</h4>
-              <p className="text-gray-700 text-base mb-2 dark:text-gray-300">
+              <h4 className="~text-sm/base font-normal mb-1 text-[#171717] dark:text-white">{article.title}</h4>
+              <p className="text-gray-700 text-sm mb-2 dark:text-gray-300">
                 公開日: {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
               </p>
-            </div>
-          </Link>
-        ))}
-        {articles.length === 0 && (
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            該当する記事が見つかりませんでした。
-          </p>
-        )}
-      </section>
-    </div>
+              <p
+                className="text-gray-500 text-xs mb-2 dark:text-gray-300"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(article.content.slice(0, 100)),
+                }}
+              ></p>
+              <p className="text-base text-[#171717] dark:text-gray-300">{article.category.name}</p>
+            </Link>
+          ))}
+          {articles.length === 0 && (
+            <p className="text-center text-sm text-gray-400 dark:text-gray-500 col-span-2">該当する記事は見つかりませんでした。</p>
+          )}
+        </section>
+      )}
+    </main>
   );
 }

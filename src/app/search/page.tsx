@@ -10,10 +10,10 @@ import Side from "@/components/side";
 export default function SearchPage() {
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="min-h-screen relative">
       <Header/>
       <BackGround/>
-      <div className="container mx-auto px-6 flex flex-col lg:flex-row flex-1 relative z-10">
+      <div className="container lg:~w-[60rem]/[80rem] mx-auto md:flex relative z-10 mt-10 p-6 min-h-[80vh]">
       <Suspense fallback={<div className="text-center py-10">読み込み中...</div>}>
         <SearchContent />
       </Suspense>

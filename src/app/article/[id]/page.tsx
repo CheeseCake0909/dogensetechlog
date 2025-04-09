@@ -4,17 +4,23 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 import Header from "@/components/header";
 import BackGround from "@/components/background";
 import Footer from "@/components/footer";
 import Side from "@/components/side";
 import { client } from "@/libs/client";
 
+interface HonbunBlock {
+  fieldId: string;
+  richEditor?: string;
+  HTML?: string;
+}
+
 interface Article {
   id: string;
   title: string;
-  content: string;
+  honbun: HonbunBlock[];
   thumbnail?: { url: string };
   publishedAt: string;
   category: { name: string };
@@ -66,35 +72,57 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen relative">
-      <Header/>
-      <BackGround/>
-      <div className="container mx-auto px-6 flex flex-col lg:flex-row flex-1 relative z-10">
-        <main className="flex-1 p-6">
-          <article className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 dark:bg-gray-800">
+      <Header />
+      <BackGround />
+      <div className="container lg:~w-[60rem]/[80rem] mx-auto md:flex relative z-10 mt-10 p-6 min-h-[80vh]">
+        <main className="flex-1 bg-white dark:bg-neutral-800 border dark:border-neutral-600 px-8 py-2 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px]">
+          <article className="max-w-4xl mx-auto p-6">
             {article.thumbnail && (
               <Image src={article.thumbnail.url} alt={article.title} width={800} height={400} className="w-full rounded-md mb-6" />
             )}
-            <h2 className="text-3xl font-bold mb-4">{article.title}</h2>
-            <p className="text-gray-700 text-sm mb-4 dark:text-gray-400">
+            <h2 className="text-3xl font-bold mb-4 text-black dark:text-white">{article.title}</h2>
+            <p className="text-gray-700 text-sm dark:text-gray-400">
               公開日: {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
             </p>
             <p className="text-base font-semibold text-gray-500 mb-4 dark:text-gray-400">カテゴリ: {article.category.name}</p>
             <div className="prose max-w-full dark:prose-invert">
-              {parse(article.content)}
+              {article.honbun?.map((block, index) => {
+                if (block.fieldId === "richEditor" && block.richEditor) {
+                  return (
+                    <div key={index} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(block.richEditor) }} />
+                  );
+                }
+                if (block.fieldId === "HTML" && block.HTML) {
+                  return (
+                    <div
+                      key={index}
+                      className="my-6 w-full aspect-video relative overflow-hidden rounded-lg"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(block.HTML, {
+                          ADD_TAGS: ["iframe"],
+                          ADD_ATTR: ["allowfullscreen", "scrolling"]
+                        })
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
           </article>
-          <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg">
+          <div className="border-b my-8"></div>
+          <div className="max-w-4xl mx-auto p-2">
             <div className="flex justify-between">
               {prevArticle ? (
-                <Link href={`/article/${prevArticle.id}`} className="text-blue-500 hover:underline">
-                  ← {prevArticle.title}
+                <Link href={`/article/${prevArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-500">
+                  &lt;&lt; {prevArticle.title}
                 </Link>
               ) : (
                 <span />
               )}
               {nextArticle ? (
-                <Link href={`/article/${nextArticle.id}`} className="text-blue-500 hover:underline">
-                  {nextArticle.title} →
+                <Link href={`/article/${nextArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-500">
+                  {nextArticle.title} &gt;&gt;
                 </Link>
               ) : (
                 <span />
@@ -102,9 +130,9 @@ export default function ArticlePage() {
             </div>
           </div>
         </main>
-        <Side/>
+        <Side />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
