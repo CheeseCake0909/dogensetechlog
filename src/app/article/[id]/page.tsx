@@ -32,6 +32,7 @@ export default function ArticlePage() {
   const [article, setArticle] = useState<Article | null>(null);
   const [prevArticle, setPrevArticle] = useState<{ id: string; title: string } | null>(null);
   const [nextArticle, setNextArticle] = useState<{ id: string; title: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -42,6 +43,8 @@ export default function ArticlePage() {
         fetchAdjacentArticles(data.publishedAt);
       } catch (error) {
         console.error("記事の取得に失敗しました", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -66,69 +69,80 @@ export default function ArticlePage() {
     fetchArticle();
   }, [articleId]);
 
-  if (!article) {
-    return <div className="text-center py-10">記事が見つかりませんでした。</div>;
-  }
-
   return (
     <div className="min-h-screen relative">
       <Header />
       <BackGround />
-      <div className="container lg:~w-[60rem]/[80rem] mx-auto md:flex relative z-10 mt-10 p-6 min-h-[80vh]">
-        <main className="flex-1 bg-white dark:bg-neutral-800 border dark:border-neutral-600 px-8 py-2 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px]">
-          <article className="max-w-4xl mx-auto p-6">
-            {article.thumbnail && (
-              <Image src={article.thumbnail.url} alt={article.title} width={800} height={400} className="w-full rounded-md mb-6" />
-            )}
-            <h2 className="text-3xl font-bold mb-4 text-black dark:text-white">{article.title}</h2>
-            <p className="text-gray-700 text-sm dark:text-gray-400">
-              公開日: {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
-            </p>
-            <p className="text-base font-semibold text-gray-500 mb-4 dark:text-gray-400">カテゴリ: {article.category.name}</p>
-            <div className="prose max-w-full dark:prose-invert">
-              {article.honbun?.map((block, index) => {
-                if (block.fieldId === "richEditor" && block.richEditor) {
-                  return (
-                    <div key={index} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(block.richEditor) }} />
-                  );
-                }
-                if (block.fieldId === "HTML" && block.HTML) {
-                  return (
-                    <div
-                      key={index}
-                      className="my-6 w-full aspect-video relative overflow-hidden rounded-lg"
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(block.HTML, {
-                          ADD_TAGS: ["iframe"],
-                          ADD_ATTR: ["allowfullscreen", "scrolling"]
-                        })
-                      }}
-                    />
-                  );
-                }
-                return null;
-              })}
-            </div>
-          </article>
-          <div className="border-b my-8"></div>
-          <div className="max-w-4xl mx-auto p-2">
-            <div className="flex justify-between">
-              {prevArticle ? (
-                <Link href={`/article/${prevArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-500">
-                  &lt;&lt; {prevArticle.title}
-                </Link>
-              ) : (
-                <span />
-              )}
-              {nextArticle ? (
-                <Link href={`/article/${nextArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-500">
-                  {nextArticle.title} &gt;&gt;
-                </Link>
-              ) : (
-                <span />
-              )}
-            </div>
+      <div className="container lg:~w-[60rem]/[75rem] mx-auto md:flex relative z-10 mt-10 p-6 min-h-[80vh]">
+        <main className="flex-1 bg-white dark:bg-neutral-800 border dark:border-neutral-600 px-8 py-2 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px] duration-300">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[300px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-400 border-t-transparent" />
           </div>
+        ) : !article ? (
+          <div>
+            <div className="text-center py-10 text-black dark:text-white transition-colors duration-300">記事が見つかりませんでした。</div>
+            <div className="text-center mt-4 ">
+              <Link href="/" className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-300">
+                記事一覧へ戻る
+              </Link>
+            </div>
+          </div>    
+        ) : (
+          <>
+            <article className="max-w-4xl mx-auto p-6">
+              {article.thumbnail && (
+                <Image src={article.thumbnail.url} alt={article.title} width={800} height={400} className="w-full rounded-md mb-6" />
+              )}
+              <h2 className="text-3xl font-bold mb-4 text-black dark:text-white duration-300">{article.title}</h2>
+              <p className="text-gray-700 text-sm dark:text-gray-400 duration-300">
+                公開日: {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
+              </p>
+              <p className="text-base font-semibold text-gray-500 mb-4 dark:text-gray-400 duration-300">カテゴリ: {article.category.name}</p>
+              <div className="prose max-w-full dark:prose-invert">
+                {article.honbun?.map((block, index) => {
+                  if (block.fieldId === "richEditor" && block.richEditor) {
+                    return <div key={index} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(block.richEditor) }} />;
+                  }
+                  if (block.fieldId === "HTML" && block.HTML) {
+                    return (
+                      <div
+                        key={index}
+                        className="my-6 w-full aspect-video relative overflow-hidden rounded-lg"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(block.HTML, {
+                            ADD_TAGS: ["iframe"],
+                            ADD_ATTR: ["allowfullscreen", "scrolling"]
+                          })
+                        }}
+                      />
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </article>
+            <div className="border-b my-8"></div>
+            <div className="max-w-4xl mx-auto p-2">
+              <div className="flex justify-between">
+                {prevArticle ? (
+                  <Link href={`/article/${prevArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-300">
+                    &lt;&lt; {prevArticle.title}
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                {nextArticle ? (
+                  <Link href={`/article/${nextArticle.id}`} className="text-black hover:text-neutral-300 dark:text-white dark:hover:text-neutral-500 duration-300">
+                    {nextArticle.title} &gt;&gt;
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </div>
+            </div>
+          </>
+          )}
         </main>
         <Side />
       </div>

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Zen_Kaku_Gothic_Antique } from "next/font/google";
-import "./globals.css"; // Tailwind CSS の適用
+import "./globals.css";
 import localFont from "next/font/local";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-
+import { ThemeProvider } from "next-themes";
+import Script from "next/script";
 
 const zenKakuGothicAntique = Zen_Kaku_Gothic_Antique({
   weight: ["300", "400", "500", "700", "900"],
-  subsets: ["latin"]
+  subsets: ["latin"],
 });
 
 const ElenaShine = localFont({
@@ -16,7 +16,7 @@ const ElenaShine = localFont({
       path: "./fonts/GlitchSlap-R8me.ttf",
       weight: "400",
       style: "normal",
-    }
+    },
   ],
   variable: "--font-ElenaShine",
 });
@@ -34,28 +34,23 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
-        {/* これを追加 */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  if (theme === 'dark' || (theme === 'system' && prefersDark)) {
-                    document.documentElement.classList.add('dark');
-                  }
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
+      <Script id="theme-init" strategy="beforeInteractive">
+  {`
+    try {
+      const theme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (theme === 'dark' || (!theme && systemPrefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  `}
+</Script>
       </head>
       <body
         className={`${zenKakuGothicAntique.className} antialiased ${ElenaShine.variable}`}
       >
-        <ThemeProvider>
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
         </ThemeProvider>
       </body>
     </html>
