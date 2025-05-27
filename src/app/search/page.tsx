@@ -8,7 +8,6 @@ import Footer from "@/components/footer";
 import Side from "@/components/side";
 
 export default function SearchPage() {
-
   return (
     <div className="min-h-screen relative">
       <Header/>

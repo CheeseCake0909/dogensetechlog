@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/client";
+import Script from "next/script";
 
 interface Article {
   id: string;
@@ -47,12 +48,40 @@ export default function SearchContent() {
   }, [query]);
 
   return (
+    <>
+    <title>
+    {!query
+      ? "検索キーワードが指定されていません。 | Dogense Tech Log"
+      : isLoading
+      ? `「${query}」の検索結果 | Dogense Tech Log`
+      : articles.length === 0}
+    </title>
+    <meta name="description" content="お探しのページが見つかりませんでした。" />
+    <Script id="theme-init" strategy="beforeInteractive">
+      {`
+        try {
+          const theme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === 'dark' || (!theme && systemPrefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      `}
+    </Script>
     <main className="flex-1 dark:bg-opacity-60 border dark:border-neutral-600 px-8 py-2 pb-10 mb-10 shadow rounded-lg backdrop-blur-[2px] duration-300">
       <h2 className="~text-xl/2xl font-normal ~py-4/7 text-[#171717] dark:text-white duration-500">「{query}」の検索結果</h2>
-      {isLoading ? (
+      {!query ? (
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500 col-span-2 duration-500">
+          検索キーワードが指定されていません。
+        </p>
+      ) : isLoading ? (
         <div className="flex justify-center items-center h-40">
-          <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"/>
+          <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin" />
         </div>
+      ) : articles.length === 0 ? (
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500 col-span-2 duration-500">
+          該当する記事は見つかりませんでした。
+        </p>
       ) : (
         <section className="grid lg:grid-cols-2 gap-8">
           {articles.map((article) => (
@@ -91,11 +120,9 @@ export default function SearchContent() {
               </div>
             </Link>
           ))}
-          {articles.length === 0 && (
-            <p className="text-center text-sm text-gray-400 dark:text-gray-500 col-span-2 duration-500">該当する記事は見つかりませんでした。</p>
-          )}
         </section>
       )}
     </main>
+    </>
   );
 }
