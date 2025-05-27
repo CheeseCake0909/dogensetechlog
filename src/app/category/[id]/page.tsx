@@ -6,7 +6,6 @@ import BackGround from "@/components/background";
 import Footer from "@/components/footer";
 import Side from "@/components/side";
 import { client } from "@/libs/client";
-import Script from "next/script";
 
 interface Article {
   id: string;
@@ -59,18 +58,6 @@ export default async function CategoryPage({ params }: { params: { id: string } 
   const articles = await getArticlesByCategory(params.id);
 
   return (
-  <>
-    <Script id="theme-init" strategy="beforeInteractive">
-      {`
-        try {
-          const theme = localStorage.getItem('theme');
-          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (theme === 'dark' || (!theme && systemPrefersDark)) {
-            document.documentElement.classList.add('dark');
-          }
-        } catch (e) {}
-      `}
-    </Script>
     <div className="min-h-screen relative">
       <Header />
       <BackGround />
@@ -127,6 +114,5 @@ export default async function CategoryPage({ params }: { params: { id: string } 
       </div>
       <Footer />
     </div>
-    </>
   );
 }
