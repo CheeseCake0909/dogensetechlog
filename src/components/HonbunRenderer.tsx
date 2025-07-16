@@ -24,7 +24,7 @@ export default function HonbunRenderer({ honbun }: { honbun: HonbunBlock[] | nul
           return (
             <div
               key={index}
-              className="my-6 w-full aspect-video relative overflow-hidden rounded-lg"
+              className="my-6 w-full aspect-video relative overflow-hidden rounded-lg [&>iframe]:absolute [&>iframe]:inset-0 [&>iframe]:w-full [&>iframe]:h-full"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(block.HTML, {
                   ADD_TAGS: ["iframe"],

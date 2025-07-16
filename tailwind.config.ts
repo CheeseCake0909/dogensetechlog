@@ -31,12 +31,10 @@ const config: Config = {
     "overflow-hidden",
     "rounded-lg",
     "my-6",
-    "absolute",
-    "inset-0",
-    "w-full",
-    "h-full",
-    "border",
-    "shadow-md",
+    "[&>iframe]:absolute",
+    "[&>iframe]:inset-0",
+    "[&>iframe]:w-full",
+    "[&>iframe]:h-full",
   ]
 };
 export default config;
