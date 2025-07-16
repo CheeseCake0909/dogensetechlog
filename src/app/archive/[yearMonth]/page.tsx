@@ -47,7 +47,7 @@ export default async function ArchivePage({ params }: { params: { yearMonth: str
       (a: Article, b: Article) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     );
   } catch (error) {
-    console.error("アーカイブ記事の取得に失敗しました", error);
+    console.error("アーカイブ記事の取得に失敗しました。", error);
   }
 
   return (
