@@ -25,5 +25,18 @@ const config: Config = {
     fontSize,　// Fluidによって拡張されたフォントサイズを使用可能にする
   },
   plugins: [require('@tailwindcss/typography'),fluid],
+  safelist: [
+    "aspect-video",
+    "relative",
+    "overflow-hidden",
+    "rounded-lg",
+    "my-6",
+    "absolute",
+    "inset-0",
+    "w-full",
+    "h-full",
+    "border",
+    "shadow-md",
+  ]
 };
 export default config;
