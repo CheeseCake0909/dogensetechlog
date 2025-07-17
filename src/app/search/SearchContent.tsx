@@ -10,7 +10,7 @@ import Script from "next/script";
 interface Article {
   id: string;
   title: string;
-  content: string;
+  honbun: string;
   thumbnail?: { url: string };
   category: { id: string; name: string };
   publishedAt: string;
@@ -107,7 +107,7 @@ export default function SearchContent() {
                     {article.title}
                   </h3>
                   <p className="text-gray-500 text-xs mb-2 dark:text-gray-300 duration-300">
-                    {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}
+                    {article.honbun.replace(/<[^>]+>/g, "").slice(0, 100)}
                   </p>
                   <button className="my-3">
                     <Link

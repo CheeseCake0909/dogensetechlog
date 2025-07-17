@@ -3,8 +3,8 @@
 export default function BackGround() {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-neutral-100 dark:bg-[#000000] transition duration-300">
-      <div className="blob bg-blue-100 dark:bg-blue-900 transition duration-300"></div>
-      <div className="blob bg-cyan-100 dark:bg-cyan-900 transition duration-300"></div>
+      <div className="blob bg-blue-200 dark:bg-blue-900 opacity-30 dark:opacity-25 transition duration-300"></div>
+      <div className="blob bg-cyan-200 dark:bg-cyan-900 opacity-30 dark:opacity-25 transition duration-300"></div>
       <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">

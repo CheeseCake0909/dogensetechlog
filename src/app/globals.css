@@ -37,12 +37,11 @@ body {
 
 .blob {
   position: absolute;
-  width: 700px;
-  height: 700px;
-  border-radius: 500%;
-  filter: blur(150px);
-  opacity: 0.3;
-  animation: moveBlob 15s ease-in-out infinite alternate;
+  width: 1000px;
+  height: 1000px;
+  border-radius: 400%;
+  filter: blur(100px);
+  animation: moveBlob 12s ease-in-out infinite alternate;
 }
 
 .blob:nth-child(1) {
@@ -62,10 +61,10 @@ body {
     transform: translate(0, 0) scale(1);
   }
   50% {
-    transform: translate(50px, -30px) scale(1.2);
+    transform: translate(40px, -80px) scale(0.8);
   }
   100% {
-    transform: translate(-40px, 60px) scale(0.9);
+    transform: translate(20px, 10px) scale(1.2);
   }
 }
 

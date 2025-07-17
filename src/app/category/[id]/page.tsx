@@ -10,7 +10,7 @@ import { client } from "@/libs/client";
 interface Article {
   id: string;
   title: string;
-  content: string;
+  honbun: string;
   thumbnail?: { url: string };
   category: { id: string; name: string };
   publishedAt: string;
@@ -93,7 +93,7 @@ export default async function CategoryPage({ params }: { params: { id: string } 
                       {article.title}
                     </h3>
                     <p className="text-gray-500 text-xs dark:text-gray-300 duration-300">
-                      {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}...
+                      {article.honbun.replace(/<[^>]+>/g, "").slice(0, 100)}...
                     </p>
                   </div>
                 </Link>
