@@ -31,8 +31,14 @@ interface AdjacentArticle {
 
 async function getArticle(id: string): Promise<Article> {
   try {
-    const data: Article = await client.get({ endpoint: "article", contentId: id });
-    console.log("honbunチェック", data.honbun); // ← ここでも確認
+    const data: Article = await client.get({
+      endpoint: "article",
+      contentId: id,
+      queries: {
+        fields: "id,title,honbun,thumbnail,publishedAt,category"
+      },
+    });
+
     return data;
   } catch (e) {
     console.error("記事取得エラー", e);
