@@ -6,7 +6,6 @@ import Footer from "@/components/footer";
 import Side from "@/components/side";
 import { client } from "@/libs/client";
 
-// --- 型定義 ---
 interface HonbunBlock {
   fieldId: string;
   richEditor?: string;

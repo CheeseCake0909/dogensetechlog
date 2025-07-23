@@ -7,14 +7,12 @@ import Footer from "@/components/footer";
 import Side from "@/components/side";
 import { client } from "@/libs/client";
 
-// 本文ブロックの型定義
 interface HonbunBlock {
   fieldId: string;
   richEditor?: string;
   HTML?: string;
 }
 
-// 記事型
 interface Article {
   id: string;
   title: string;
@@ -24,13 +22,11 @@ interface Article {
   publishedAt: string;
 }
 
-// カテゴリ型
 interface Category {
   id: string;
   name: string;
 }
 
-// カテゴリ取得
 async function getCategory(id: string): Promise<Category> {
   try {
     const data = await client.get({ endpoint: "category", contentId: id });
@@ -40,7 +36,6 @@ async function getCategory(id: string): Promise<Category> {
   }
 }
 
-// 記事取得
 async function getArticlesByCategory(id: string): Promise<Article[]> {
   const data = await client.get<{ contents: Article[] }>({
     endpoint: "article",
@@ -52,7 +47,6 @@ async function getArticlesByCategory(id: string): Promise<Article[]> {
   );
 }
 
-// SEO用メタデータ
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const category = await getCategory(params.id);
   return {
@@ -61,7 +55,6 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-// ページ本体
 export default async function CategoryPage({ params }: { params: { id: string } }) {
   const category = await getCategory(params.id);
   const articles = await getArticlesByCategory(params.id);

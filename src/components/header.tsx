@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { useTheme } from "next-themes"; // next-themes を使用
+import { useTheme } from "next-themes";
 
 export default function Header() {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const { setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // 初回マウントチェック（next-themesの推奨）
   useEffect(() => {
     setMounted(true);
   }, []);

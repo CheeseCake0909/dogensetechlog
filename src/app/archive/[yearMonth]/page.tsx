@@ -7,7 +7,6 @@ import Footer from "@/components/footer";
 import Side from "@/components/side";
 import { client } from "@/libs/client";
 
-// 本文構造の型定義
 interface HonbunBlock {
   fieldId: string;
   richEditor?: string;
@@ -23,7 +22,6 @@ interface Article {
   publishedAt: string;
 }
 
-// メタデータ
 export async function generateMetadata({ params }: { params: { yearMonth: string } }) {
   const [year, month] = params.yearMonth.split("-");
   return {

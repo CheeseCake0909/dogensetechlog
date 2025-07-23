@@ -1,6 +1,6 @@
 "use client";
 
-import DOMPurify from "dompurify"; // ✅ これが正しい
+import DOMPurify from "dompurify";
 import React from "react";
 
 interface HonbunBlock {
